@@ -18,14 +18,14 @@ public class ImageProfileService {
         return imageProfileRepository.findAll();
     }
 
-    public ImageProfile addImage(ImageProfileWithouthId imageProfileWithouthId, MultipartFile image) throws IOException {
+    public ImageProfile addImage(ImageProfileWithoutId imageProfileWithoutId, MultipartFile image) throws IOException {
         String id = uuidService.getRandomId();
         String url = null;
 
         if (image!= null) {
             url = cloudinaryService.uploadImage(image);
         }
-        ImageProfile imageToSave = new ImageProfile(id,imageProfileWithouthId.name(),url);
+        ImageProfile imageToSave = new ImageProfile(id, imageProfileWithoutId.name(),url);
         return imageProfileRepository.save(imageToSave);
     }
 }

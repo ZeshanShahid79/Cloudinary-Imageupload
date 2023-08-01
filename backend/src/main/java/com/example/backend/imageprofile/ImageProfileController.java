@@ -19,9 +19,10 @@ public class ImageProfileController {
     List<ImageProfile> getAllImages() {
         return imageProfileService.getAllImages();
     }
-@PostMapping
-@ResponseStatus(HttpStatus.CREATED)
-    ImageProfile addImageProfile(@RequestPart ImageProfileWithouthId imageProfileWithouthId, @RequestPart(required = false) MultipartFile image) throws IOException {
-        return imageProfileService.addImage(imageProfileWithouthId,image);
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    ImageProfile addImageProfile(@RequestPart("data") ImageProfileWithoutId imageProfileWithoutId, @RequestPart(name="file",required = false) MultipartFile image) throws IOException {
+        return imageProfileService.addImage(imageProfileWithoutId, image);
     }
 }
