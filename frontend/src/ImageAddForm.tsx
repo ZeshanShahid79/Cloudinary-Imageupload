@@ -1,12 +1,13 @@
 import {ChangeEvent, FormEvent, useState} from 'react';
-import axios, {AxiosError} from 'axios';
-import {toast} from 'react-toastify';
+
 import {ImageProfileWithoutId} from "./ImageProfile.ts";
 import {Button, Input, TextField} from "@mui/material";
 
 
 type Props = {
-    fetchImages: () => void;
+
+    addImageProfile: (data: FormData, name: string) => void
+
 }
 
 function ImageAddForm(props: Props) {
@@ -25,22 +26,8 @@ function ImageAddForm(props: Props) {
             data.append("file", image)
         }
         data.append("data", new Blob([JSON.stringify(imageProfileWithoutId)], {type: "application/json"}))
+        props.addImageProfile(data, name)
 
-        axios
-            .post('/api/image', data, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            })
-            .then(() => {
-                toast.success('Added: ' + name);
-                setName('');
-                props.fetchImages()
-            })
-            .catch((error: AxiosError) => {
-                console.log(error)
-                toast.error('Error adding ImageProfile' + error.response?.statusText);
-            });
     };
 
     function handleProductNameInput(event: ChangeEvent<HTMLInputElement>) {
@@ -50,7 +37,8 @@ function ImageAddForm(props: Props) {
     function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         addImage();
-        setImage(undefined)             // das funktionert noch nicht
+        setName("")
+        setImage(undefined)
     }
 
     function handleImageInput(event: ChangeEvent<HTMLInputElement>) {
@@ -58,6 +46,7 @@ function ImageAddForm(props: Props) {
             setImage(event.target.files[0])
         }
     }
+
 
     return (
         <form onSubmit={handleSubmit}>
