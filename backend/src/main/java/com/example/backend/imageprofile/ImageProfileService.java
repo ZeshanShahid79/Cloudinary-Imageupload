@@ -14,6 +14,7 @@ public class ImageProfileService {
     private final ImageProfileRepository imageProfileRepository;
     private final UuidService uuidService;
     private final CloudinaryService cloudinaryService;
+
     public List<ImageProfile> getAllImages() {
         return imageProfileRepository.findAll();
     }
