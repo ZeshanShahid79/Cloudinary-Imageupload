@@ -10,7 +10,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class ImageProfileServiceTest {
@@ -38,21 +37,20 @@ class ImageProfileServiceTest {
     void postImageProfile() throws IOException {
         //GIVEN
         ImageProfileWithoutId imageProfileWithoutId = new ImageProfileWithoutId("docker-image");
-        ImageProfile imageProfile = new ImageProfile("1", "docker-image", "test-url.de");
+        ImageProfile expected = new ImageProfile("1", "docker-image", "test-url.de");
+        MockMultipartFile file = new MockMultipartFile("docker-image", "irgendwas".getBytes());
 
-        when(cloudinaryService.uploadImage(any())).thenReturn("test-url.de");
-        when(imageProfileRepository.save(imageProfile)).thenReturn(imageProfile);
+        when(cloudinaryService.uploadImage(file)).thenReturn("test-url.de");
+        when(imageProfileRepository.save(expected)).thenReturn(expected);
         when(uuidService.getRandomId()).thenReturn("1");
 
-        MockMultipartFile file = new MockMultipartFile("docker-image", "irgendwas".getBytes());
 
         //WHEN
         ImageProfile actual = imageProfileService.addImage(imageProfileWithoutId, file);
 
         //THEN
-        ImageProfile expected = new ImageProfile("1", "docker-image", "test-url.de");
         verify(cloudinaryService).uploadImage(file);
-        verify(imageProfileRepository).save(imageProfile);
+        verify(imageProfileRepository).save(expected);
         verify(uuidService).getRandomId();
         assertEquals(expected, actual);
     }

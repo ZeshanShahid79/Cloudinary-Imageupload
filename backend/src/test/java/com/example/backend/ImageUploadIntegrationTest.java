@@ -2,8 +2,6 @@ package com.example.backend;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Uploader;
-import com.example.backend.imageprofile.ImageProfile;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,13 +11,11 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.*;
-
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.io.File;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -30,8 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class ImageUploadIntegrationTest {
 
-    @Autowired
-    ObjectMapper objectMapper;
     @Autowired
     MockMvc mockMvc;
     @MockBean
@@ -54,7 +48,7 @@ class ImageUploadIntegrationTest {
                 null,
                 MediaType.APPLICATION_JSON_VALUE,
                 """
-                                                {"name":"docker-image"}
+                            {"name":"docker-image"}
                         """
                         .getBytes()
         );
@@ -71,7 +65,7 @@ class ImageUploadIntegrationTest {
         when(cloudinary.uploader()).thenReturn(uploader);
         when(uploader.upload(any(), any())).thenReturn(Map.of("url", "test-url"));
 
-        String actual = mockMvc.perform(multipart("http://localhost:8080/api/image")
+        mockMvc.perform(multipart("/api/image")
                         .file(data)
                         .file(file))
                 .andExpect(status().isCreated())
@@ -79,12 +73,7 @@ class ImageUploadIntegrationTest {
                         {"name": "docker-image",
                         "url": "test-url"}
                         """))
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+                .andExpect(jsonPath("$.id").isNotEmpty());
 
-        ImageProfile actualImage = objectMapper.readValue(actual, ImageProfile.class);
-        assertThat(actualImage.id())
-                .isNotBlank();
     }
 }
