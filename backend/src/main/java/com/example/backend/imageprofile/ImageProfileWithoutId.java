@@ -1,7 +1,7 @@
 package com.example.backend.imageprofile;
 
 public record ImageProfileWithoutId(
-        String name,
-        String url
+        String name
+
 ) {
 }

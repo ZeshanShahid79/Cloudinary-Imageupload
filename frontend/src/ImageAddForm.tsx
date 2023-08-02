@@ -1,9 +1,8 @@
 import {ChangeEvent, FormEvent, useState} from 'react';
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 import {toast} from 'react-toastify';
 import {ImageProfileWithoutId} from "./ImageProfile.ts";
 import {Button, Input, TextField} from "@mui/material";
-
 
 
 type Props = {
@@ -35,12 +34,12 @@ function ImageAddForm(props: Props) {
             })
             .then(() => {
                 toast.success('Added: ' + name);
-                props.fetchImages()
                 setName('');
-                setImage(undefined)
+                props.fetchImages()
             })
-            .catch((error: string) => {
-                toast.error('Error adding ImageProfile' + error); // Frage an Florian wie komme ich an den statusText
+            .catch((error: AxiosError) => {
+                console.log(error)
+                toast.error('Error adding ImageProfile' + error.response?.statusText);
             });
     };
 
@@ -51,6 +50,7 @@ function ImageAddForm(props: Props) {
     function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         addImage();
+        setImage(undefined)             // das funktionert noch nicht
     }
 
     function handleImageInput(event: ChangeEvent<HTMLInputElement>) {
