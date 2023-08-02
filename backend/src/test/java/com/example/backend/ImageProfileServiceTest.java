@@ -44,7 +44,7 @@ class ImageProfileServiceTest {
         when(imageProfileRepository.save(imageProfile)).thenReturn(imageProfile);
         when(uuidService.getRandomId()).thenReturn("1");
 
-        MockMultipartFile file = new MockMultipartFile("url", "irgendwas".getBytes());
+        MockMultipartFile file = new MockMultipartFile("docker-image", "irgendwas".getBytes());
 
         //WHEN
         ImageProfile actual = imageProfileService.addImage(imageProfileWithoutId, file);
